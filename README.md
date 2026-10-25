@@ -14,6 +14,14 @@ A research dashboard for CFTC futures positioning across foreign exchange, rates
 - Indicative dollar notional using dated FX / nearby-futures marks; Treasury face and STIR reference principal are clearly differentiated. Unmapped values remain missing. Optional USD-per-contract overrides are stored only in the browser.
 - Nine explicit macro baskets, custom signed baskets and correlations of weekly positioning changes.
 
+## Spec positioning comparison
+
+The default view compares leveraged funds (managed money for commodities), Legacy noncommercials and asset managers side by side for the same contract and report basis. The three overlapping classifications are never added together. Asset managers are unavailable in the commodity report. Each card preserves its own net contracts, weekly change, net/OI and 6M/1Y/3Y/5Y/10Y/all-retained percentiles.
+
+The sortable scanner flags opposite net signs and a descriptive historical-rank gap of at least 50 percentile points. These are separate flags: a low historical rank need not mean net short. Cross-lens flags are suppressed if any relevant category is missing or report dates/bases differ. The history chart keeps separate series and gaps; the CSV contains one row per market and category with dates and source URLs. Refresh checks all three report families.
+
+`npm run test:spec` verifies contract/basis alignment, the 20 October 2026 AUD reference when that snapshot is current, independent percentiles, date guards, missing categories, history gaps and exports.
+
 ## Run
 
 Node 22+ and Python 3 (standard library only for data retrieval):
