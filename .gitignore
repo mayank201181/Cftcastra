@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.vercel/
+.openai/
+public/data/
+.env*
+!.env.example
+*.tsbuildinfo
+outputs/

@@ -1,0 +1,91 @@
+{
+  "tff": {
+    "datasets": [
+      "gpe5-46if",
+      "yw9f-hn96"
+    ],
+    "groups": {
+      "dealer": [
+        "dealer_positions_long_all",
+        "dealer_positions_short_all",
+        "dealer_positions_spread_all"
+      ],
+      "asset_manager": [
+        "asset_mgr_positions_long",
+        "asset_mgr_positions_short",
+        "asset_mgr_positions_spread"
+      ],
+      "leveraged": [
+        "lev_money_positions_long",
+        "lev_money_positions_short",
+        "lev_money_positions_spread"
+      ],
+      "other": [
+        "other_rept_positions_long",
+        "other_rept_positions_short",
+        "other_rept_positions_spread"
+      ],
+      "nonreportable": [
+        "nonrept_positions_long_all",
+        "nonrept_positions_short_all",
+        null
+      ]
+    }
+  },
+  "disaggregated": {
+    "datasets": [
+      "72hh-3qpy",
+      "kh3c-gbw2"
+    ],
+    "groups": {
+      "producer": [
+        "prod_merc_positions_long",
+        "prod_merc_positions_short",
+        null
+      ],
+      "swap": [
+        "swap_positions_long_all",
+        "swap__positions_short_all",
+        "swap__positions_spread_all"
+      ],
+      "managed": [
+        "m_money_positions_long_all",
+        "m_money_positions_short_all",
+        "m_money_positions_spread"
+      ],
+      "other": [
+        "other_rept_positions_long",
+        "other_rept_positions_short",
+        "other_rept_positions_spread"
+      ],
+      "nonreportable": [
+        "nonrept_positions_long_all",
+        "nonrept_positions_short_all",
+        null
+      ]
+    }
+  },
+  "legacy": {
+    "datasets": [
+      "6dca-aqww",
+      "jun7-fc8e"
+    ],
+    "groups": {
+      "noncommercial": [
+        "noncomm_positions_long_all",
+        "noncomm_positions_short_all",
+        "noncomm_postions_spread_all"
+      ],
+      "commercial": [
+        "comm_positions_long_all",
+        "comm_positions_short_all",
+        null
+      ],
+      "nonreportable": [
+        "nonrept_positions_long_all",
+        "nonrept_positions_short_all",
+        null
+      ]
+    }
+  }
+}

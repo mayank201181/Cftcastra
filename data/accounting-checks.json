@@ -1,0 +1,62 @@
+[
+  {
+    "dataset": "6dca-aqww",
+    "rows": 176750,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  },
+  {
+    "dataset": "72hh-3qpy",
+    "rows": 136062,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  },
+  {
+    "dataset": "gpe5-46if",
+    "rows": 39524,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  },
+  {
+    "dataset": "jun7-fc8e",
+    "rows": 179869,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  },
+  {
+    "dataset": "kh3c-gbw2",
+    "rows": 139174,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  },
+  {
+    "dataset": "yw9f-hn96",
+    "rows": 39529,
+    "issues": {
+      "total_oi": 0,
+      "groups_oi": 0,
+      "negative_position": 0
+    },
+    "examples": []
+  }
+]
