@@ -3,7 +3,7 @@ Run on GitHub Actions or locally. A first run fetches full current-universe hist
 subsequent unchanged releases leave files unchanged. Annual full history is refetched
 on a new report to retain revisions. Raw vintage files remain in Git commit history.
 """
-import concurrent.futures, datetime as dt, gzip, json, os, pathlib, time, urllib.parse, urllib.request
+import calendar, concurrent.futures, csv, datetime as dt, gzip, io, json, os, pathlib, time, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data'
@@ -76,20 +76,44 @@ def refresh(job):
 
 def refresh_prices(cutoff):
     file=DATA/'prices.json';prices=json.loads(file.read_text()) if file.exists() else {}
-    symbols='EURUSD=X JPY=X AUDUSD=X GBPUSD=X CAD=X CHF=X NZDUSD=X MXN=X BRL=X ZAR=X ES=F NQ=F YM=F RTY=F CL=F NG=F GC=F SI=F HG=F ZC=F ZW=F ZS=F KC=F CT=F SB=F CC=F HE=F LE=F GF=F RB=F HO=F PL=F PA=F ZL=F ZM=F OJ=F BTC=F ETH=F DX-Y.NYB'.split()
+    symbols='EURUSD=X JPY=X AUDUSD=X GBPUSD=X CAD=X CHF=X NZDUSD=X MXN=X BRL=X ZAR=X ES=F NQ=F YM=F RTY=F CL=F BZ=F NG=F GC=F SI=F HG=F ZC=F ZW=F KE=F ZS=F KC=F CT=F SB=F CC=F HE=F LE=F GF=F RB=F HO=F PL=F PA=F ZL=F ZM=F OJ=F BTC=F ETH=F NIY=F MFS=F MME=F DX-Y.NYB VX=F'.split()
     end=dt.datetime.fromisoformat(cutoff).replace(tzinfo=dt.timezone.utc)+dt.timedelta(days=1)
     params={'period1':int((end-dt.timedelta(days=20)).timestamp()),'period2':int(end.timestamp()),'interval':'1d'}
     def one(symbol):
         if prices.get(symbol,{}).get('date')==cutoff:return None
-        url='https://query2.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(symbol,safe='')+'?'+urllib.parse.urlencode(params)
+        resolved=symbol
+        if symbol in ('MFS=F','MME=F'):
+            month=((end.month-1)//3+1)*3
+            year=end.year
+            # Roll after the quarterly expiry week rather than retaining an expired quote.
+            if end.month==month and end.day>=15:
+                month+=3
+                if month>12:month=3;year+=1
+            resolved=symbol[:3]+{3:'H',6:'M',9:'U',12:'Z'}[month]+str(year)[-2:]+'.NYB'
+        url='https://query2.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(resolved,safe='')+'?'+urllib.parse.urlencode(params)
         try:
+            if symbol=='VX=F':
+                # Next calendar month's standard VIX expiry: 30 days before the
+                # third Friday of the month after that. Source may vary on holidays;
+                # on missing file retain the old dated mark, never fabricate a price.
+                month=end.month+2;year=end.year
+                if month>12:month-=12;year+=1
+                fridays=[w[calendar.FRIDAY] for w in calendar.monthcalendar(year,month) if w[calendar.FRIDAY]]
+                expiry=dt.date(year,month,fridays[2])-dt.timedelta(days=30)
+                url=f'https://cdn.cboe.com/data/us/futures/market_statistics/historical_data/VX/VX_{expiry.isoformat()}.csv'
+                with urllib.request.urlopen(url,timeout=25) as response:
+                    records=list(csv.DictReader(io.StringIO(response.read().decode())))
+                valid=[r for r in records if r.get('Trade Date','')<=cutoff and r.get('Settle')]
+                if not valid:return None
+                r=max(valid,key=lambda r:r['Trade Date'])
+                return symbol,{'price':float(r['Settle']),'date':r['Trade Date'],'source':'Cboe official settlement','source_url':url,'kind':f'VIX futures settlement · expires {expiry}','retrievedAt':dt.datetime.now(dt.timezone.utc).isoformat()}
             req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
             with urllib.request.urlopen(req,timeout=25) as response:r=json.load(response)['chart']['result'][0]
             pairs=[(dt.datetime.fromtimestamp(t,dt.timezone.utc).date().isoformat(),v) for t,v in zip(r['timestamp'],r['indicators']['quote'][0]['close']) if v is not None]
             valid=[p for p in pairs if p[0]<=cutoff]
             if not valid:return None
             d,v=max(valid)
-            return symbol,{'price':v,'date':d,'source':'Yahoo Finance · daily close','source_url':url,'retrievedAt':dt.datetime.now(dt.timezone.utc).isoformat()}
+            return symbol,{'price':v,'date':d,'source':'Yahoo Finance · daily close','source_url':url,'kind':('Named futures proxy · '+resolved) if resolved!=symbol else prices.get(symbol,{}).get('kind'),'retrievedAt':dt.datetime.now(dt.timezone.utc).isoformat()}
         except Exception as exc:
             print('PRICE UNAVAILABLE',symbol,str(exc),flush=True);return None
     changed=False
