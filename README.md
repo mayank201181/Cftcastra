@@ -1,5 +1,7 @@
 # CFTC Astra — Positioning Atlas
 
+[Open the live dashboard](https://cftcastra.vercel.app/)
+
 A research dashboard for CFTC futures positioning across foreign exchange, rates, commodities, equity indices and crypto. Built with Next.js and React for Vercel.
 
 ## Coverage
@@ -55,7 +57,7 @@ Initial historical downloads are revised history, not historical vintages. Git r
 
 Open-source projects evaluated as references: [cftc-cot-viewer](https://github.com/proprietary/cftc-cot-viewer), [cftc-cot](https://github.com/victorKariuki/cftc-cot), [cot_reports](https://github.com/NDelventhal/cot_reports) and [pycot](https://github.com/philsv/pycot). Application and analytics code here were independently implemented; no repository was copied wholesale.
 
-Price proxies are supplementary Yahoo daily closes, not official settlement values. Source URLs and observation dates are retained. Initial quote provenance is in `data/price-audit.json`. CFTC's current Micro Russell text appears to say $0.5; the vetted mapping uses CME's $5 per index point. Unsupported or uncertain conversions remain null.
+Price proxies are mostly supplementary Yahoo daily closes, not official settlements. VIX uses a dated Cboe futures settlement; MSCI contracts use named-contract quotes, including an explicitly sourced secondary-market seed when the regular quote feed is unavailable. Quote failures retain the previous dated mark and the UI flags stale marks. Source URLs and observation dates are retained in `data/prices.json`; initial provenance is in `data/price-audit.json` and `data/extra-price-audit.json`. CFTC's current Micro Russell text appears to say $0.5; the vetted mapping uses CME's $5 per index point. Unsupported or uncertain conversions remain null.
 
 ## Verification
 
