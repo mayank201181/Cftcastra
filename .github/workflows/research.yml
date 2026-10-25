@@ -8,6 +8,7 @@ on:
       - '.github/workflows/research.yml'
       - 'scripts/refresh-research.py'
       - 'data/research-markets.json'
+      - 'data/cme-product-map.json'
 permissions:
   contents: write
 concurrency:

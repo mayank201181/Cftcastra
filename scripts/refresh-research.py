@@ -192,6 +192,40 @@ def parse_aud_strikes(text,date,url,sha):
     if len(out)<4 or not any(r['side']=='put' for r in out):raise ValueError('ADU option coverage unexpectedly low')
     return out
 
+def parse_macro_oi(text,m):
+    matches=[l for l in text.splitlines() if l.startswith(m['symbol']+' ') and m['expected'] in l]
+    if len(matches)!=1:raise ValueError('CME product identity ambiguous: '+m['symbol'])
+    line=matches[0]
+    # Current OI, signed daily change, previous-week volume and previous-week OI.
+    # Anchored to the right edge so page-layout shifts cannot move the OI column.
+    tail=re.search(r'(\d+)\s+([+-])\s+(\d+)\s+(\d+)\s+(\d+)\s*$',line)
+    if tail:oi=int(tail[1]);change=int(tail[3])*(1 if tail[2]=='+' else -1)
+    else:
+        # Zero-change rows must have an unambiguous local column header. Otherwise fail closed.
+        page=next(p for p in text.split('\f') if line in p)
+        header=next((l for l in page.splitlines() if 'OPEN INTEREST & CHGE' in l),None)
+        if not header:raise ValueError('CME zero-change OI column lacks a header: '+m['symbol'])
+        anchor=header.index('OPEN INTEREST & CHGE')
+        tokens=[x for x in re.finditer(r'\d+',line) if anchor-8<=x.start() and x.end()<=anchor+10]
+        if len(tokens)!=1 or re.search(r'[+-]',line[tokens[0].end():header.rfind('VOLUME')]):raise ValueError('Unrecognized CME OI layout')
+        oi=int(tokens[0].group());change=0
+    if oi<=0 or oi-change<=0:raise ValueError('Invalid CME macro OI')
+    return oi,change
+
+def cme_macro(previous):
+    mapping=json.loads((DATA/'cme-product-map.json').read_text());by={(r['code'],r['date']):r for r in previous}
+    def one(section):
+        url='https://www.cmegroup.com/daily_bulletin/current/'+section;text,date,sha=pdf_text(url);rows=[]
+        for m in [m for m in mapping if m['section']==section]:
+            oi,change=parse_macro_oi(text,m)
+            rows.append({'code':m['code'],'priceCode':m.get('priceCode',m['code']),'name':m['name'],'date':date,'oi':oi,'change':change,'exchangeSymbol':m['symbol'],'status':'Preliminary' if 'PRELIMINARY' in text else 'Final','sourceUrl':url,'sourceSha256':sha,'scope':m['expected']+'; all listed maturities; separate micro contracts excluded','noCot':False})
+        return rows
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        for rows in pool.map(one,sorted(set(m['section'] for m in mapping))):
+            for r in rows:by[(r['code'],r['date'])]=r
+    if len(by)<len(mapping):raise ValueError('Incomplete CME macro coverage')
+    return sorted(by.values(),key=lambda r:(r['code'],r['date']))
+
 def strikes(previous):
     url='https://www.cmegroup.com/daily_bulletin/current/Section38_Australian_Dollar_New_Zealand_Dollar_Options.pdf'
     text,date,sha=pdf_text(url)
@@ -199,7 +233,7 @@ def strikes(previous):
 
 def refresh():
     price_issues=prices();path=DATA/'research-inputs.json';old=read_json(path,{});out=dict(old);statuses=[]
-    jobs={'ice':ice,'ttf':ttf,'jpx':jpx,'cme':cme,'strikes':strikes}
+    jobs={'ice':ice,'ttf':ttf,'jpx':jpx,'cme':cme,'cme_macro':cme_macro,'strikes':strikes}
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         tasks={name:pool.submit(fn,old.get(name,[])) for name,fn in jobs.items()}
         for name,f in tasks.items():

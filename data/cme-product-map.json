@@ -1,0 +1,13 @@
+[
+ {"code":"13874A","priceCode":"13874+","name":"S&P 500 · E-mini","symbol":"ES","expected":"E-MINI S&P 500 FUTURES","section":"Section01C_Summary_Volume_And_Open_Interest_Equity_Index_Futures_And_Options.pdf"},
+ {"code":"209742","priceCode":"20974+","name":"Nasdaq 100 · E-mini","symbol":"NQ","expected":"E-MINI NASDAQ 100 FUTURES","section":"Section01C_Summary_Volume_And_Open_Interest_Equity_Index_Futures_And_Options.pdf"},
+ {"code":"239742","name":"Russell 2000","symbol":"RTY","expected":"EMINI RUSSELL 2000 INDEX FUTURES","section":"Section01C_Summary_Volume_And_Open_Interest_Equity_Index_Futures_And_Options.pdf"},
+ {"code":"133741","name":"Bitcoin · CME","symbol":"BTC","expected":"BITCOIN FUTURES","section":"Section01C_Summary_Volume_And_Open_Interest_Equity_Index_Futures_And_Options.pdf"},
+ {"code":"043602","name":"US 10Y Treasury","symbol":"TYF","expected":"10-YR NOTE FUTURES","section":"Section02A_Summary_Volume_And_Open_Interest_Int_Rates_Futures_And_Options.pdf"},
+ {"code":"020601","name":"US Treasury bond","symbol":"US","expected":"30-YR BOND FUTURES","section":"Section02A_Summary_Volume_And_Open_Interest_Int_Rates_Futures_And_Options.pdf"},
+ {"code":"067651","name":"WTI crude","symbol":"CL","expected":"NYMEX CRUDE OIL (PHYSICAL)","section":"Section02C_Summary_Volume_And_Open_Interest_Energy_Futures_And_Options.pdf"},
+ {"code":"023651","name":"Henry Hub natural gas","symbol":"NG","expected":"NATURAL GAS HENRY HUB (PHYSICAL)","section":"Section02C_Summary_Volume_And_Open_Interest_Energy_Futures_And_Options.pdf"},
+ {"code":"088691","name":"Gold","symbol":"GC","expected":"COMEX GOLD FUTURES","section":"Section02B_Summary_Volume_And_Open_Interest_Metals_Futures_And_Options.pdf"},
+ {"code":"084691","name":"Silver","symbol":"SI","expected":"COMEX SILVER FUTURES","section":"Section02B_Summary_Volume_And_Open_Interest_Metals_Futures_And_Options.pdf"},
+ {"code":"085692","name":"Copper","symbol":"HG","expected":"COMEX COPPER FUTURES","section":"Section02B_Summary_Volume_And_Open_Interest_Metals_Futures_And_Options.pdf"}
+]

@@ -66,7 +66,7 @@ Initial historical downloads are revised history, not historical vintages. Git r
 
 | Layer | Implementation | Material limits |
 | --- | --- | --- |
-| Daily OI / nowcast | Official CME FX bulletin; standard-contract OI, 1D change, change since COT; fund, Legacy and asset-manager regressions | Daily OI does not identify participants. Only FX has a nowcast. Weekly regression validation does not validate partial-week extrapolation. |
+| Daily OI / nowcast | Official CME FX, rates, metals, energy and equity bulletins; named-contract OI, 1D change, change since COT; fund, Legacy and asset-manager regressions | Daily OI does not identify participants. Coverage is pinned to mapped contracts, using E-mini rather than consolidated equity records. Weekly regression validation does not validate partial-week extrapolation. |
 | CTA proxy | Completed daily price versus 20/60/120-session SMA, next-close switch levels, 20-day volatility, 5-session return | Model votes, not actual CTA holdings or sized flows. Nearby futures can jump at rolls. CNH history currently insufficient. |
 | ICE energy | Brent/gasoil managed money, futures and combined, independent ranks and histories | ICE categories are not added to CFTC categories. |
 | TTF | ESMA ICE Endex TFM investment funds; matched basis/unit histories | MWh units; derived OI from reconciled category totals. New futures-only history has limited rank coverage. |

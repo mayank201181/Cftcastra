@@ -10,6 +10,8 @@ for side in ['CALL','PUT']:
         fixture+=f'{month} ADU OPT (FUTURES SETT. .00)\n'+row(7000,23,True)+'\n'+row(7100,17)+'\nTOTAL 0 40\n'
 parsed=feeds.parse_aud_strikes(fixture,'2026-10-23','https://www.cmegroup.com/test.pdf','test')
 assert len(parsed)==4 and all(r['totalOi']==40 for r in parsed)
+assert feeds.parse_macro_oi('ES E-MINI S&P 500 FUTURES 1786511 7380 1793891 1967655 + 7525 1281236 1903719',{'symbol':'ES','expected':'E-MINI S&P 500 FUTURES'})==(1967655,7525)
+assert feeds.parse_macro_oi('CL NYMEX CRUDE OIL (PHYSICAL) 1000139 28398 1028537 1914007 - 16048 1089397 1881011',{'symbol':'CL','expected':'NYMEX CRUDE OIL (PHYSICAL)'})==(1914007,-16048)
 try:feeds.parse_aud_strikes(fixture.replace('TOTAL 0 40','TOTAL 0 41',1),'2026-10-23','test','test');raise AssertionError('Bad total accepted')
 except ValueError:pass
 if '--archive' in sys.argv:
@@ -21,6 +23,7 @@ if '--archive' in sys.argv:
     for r in data['jpx']:
         for g in r['groups']:assert abs(g['buyBn']-g['sellBn']-g['netBn'])<1e-6
     for r in data.get('strikes',[]):assert sum(s['oi'] for s in r['strikes'])==r['totalOi']
+    for r in data.get('cme_macro',[]):assert r['oi']>0 and r['oi']-r['change']>0 and r['scope'] and r['sourceSha256']
     for m in prices['markets'].values():
         h=m['history'];assert h and all(p[1]>0 for p in h) and h==sorted(h)
         assert len(set(p[0] for p in h))==len(h) and h[-1][0]==m['asof']
